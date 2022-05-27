@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous" />
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.5/dist/umd/popper.min.js"
+        integrity="sha384-Xe+8cL9oJa6tN/veChSP7q+mnSPaj5Bcu9mPX5F5xIGE0DVittaqT5lorf0EI7Vk"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.min.js"
+        integrity="sha384-kjU+l4N0Yf4ZOJErLsIcvOU2qSb74wXpOhqTvwVx3OElZRweTnQ6d31fXEoRD1Jy"
+        crossorigin="anonymous"></script>
+    <title>Document</title>
+</head>
+
+<body>
+    <div class="container col-md-5">
+        <h1>New Employee Registration</h1>
+        <form id="addForm">
+            <div class="mb-3">
+                <label class="form-label">Name</label>
+                <input type="text" class="form-control" id="ename" name="ename" />
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Email</label>
+                <input type="email" class="form-control" id="eemail" name="eemail" />
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Age</label>
+                <input type="text" class="form-control" id="eage" name="eage" />
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Designation</label>
+                <input type="text" class="form-control" id="edesignation" name="edesignation" />
+            </div>
+            <button type="submit" id="save-btn" class="btn btn-primary">Add</button>
+        </form>
+    </div>
+
+
+    <div class="container my-5">
+        <h2>Employee Data</h2>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">id</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Age</th>
+                    <th scope="col">Designation</th>
+                    <th scope="col">Edit</th>
+                    <th scope="col">Delete</th>
+                </tr>
+            </thead>
+            <tbody id="load-table">
+                <!-- <tr>
+            <th scope="row">1</th>
+            <td>Mark</td>
+            <td>Otto</td>
+            <td>Otto</td>
+            <td>@mdo</td>
+            <td><button data-eid="">Edit</button></td>
+            <td>@mdo</td>
+          </tr> -->
+            </tbody>
+        </table>
+        <div id="error-msg"></div>
+        <div id="success-msg"></div>
+
+        <!-- Modal -->
+        <div class="modal fade" id="modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="">
+                            <div class="mb-3">
+                                <label class="form-label">Name</label>
+                                <input type="text" id="edit_id" name="eid">
+                                <input type="text" class="form-control" id="edit_name" name="name">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Email</label>
+                                <input type="email" class="form-control" id="edit_email" name=email>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Age</label>
+                                <input type="text" class="form-control" id="edit_age" name=age>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Designation</label>
+                                <input type="text" class="form-control" id="edit_desig" name=desig>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Update</button>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            Close
+                        </button>
+                        <button type="button" class="btn btn-primary">
+                            Save changes
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        //Show records in table
+        function LoadTable() {
+            $.ajax({
+                url: "http://localhost/php_api/api_fetchall.php",
+                type: "GET",
+                success: function (data) {
+                    console.log(data);
+                    if (data.status == false) {
+                        $("#load-table").append(
+                            "<tr><td colspan='5'><h2>" + data.message + "</h2></td></tr>"
+                        );
+                    } else {
+                        $.each(data, function (key, value) {
+                            $("#load-table").append(
+                                "<tr><td>" +
+                                value.id +
+                                "</td>" +
+                                "<td>" +
+                                value.name +
+                                "</td>" +
+                                "<td>" +
+                                value.email +
+                                "</td>" +
+                                "<td>" +
+                                value.age +
+                                "</td>" +
+                                "<td>" +
+                                value.designation +
+                                "</td>" +
+                                "<td><button   data-bs-toggle='modal' data-bs-target='#modal' class='edit-btn' data-eide='" +
+                                value.id +
+                                "'>Edit</button></td>" +
+                                "<td><button data-eidd='" +
+                                value.id +
+                                "'>Delete</button></td>" +
+                                "</tr>"
+                            );
+                        });
+                    }
+                },
+            });
+        }
+
+        LoadTable();
+
+        //function for form data to JSON object
+
+        function jsonData(targetform){
+            var arr=$(targetform).serializeArray();
+            //console.log(arr);
+
+            var obj={};
+            for(var i=0;i<arr.length;i++){
+                obj[arr[i].name]=arr[i].value;
+            }
+            //console.log(obj);
+
+            var json_string=JSON.stringify(obj);
+            //console.log(json_string);
+            return json_string;
+        }
+
+        //Insert Record
+
+        $("#save-btn").on("click", function (e) {
+            e.preventDefault();
+            var jsonobj=jsonData("#addForm");
+            console.log(jsonobj);
+
+            $.ajax({
+                url: "http://localhost/php_api/api_insert.php",
+                type: "POST",
+                data:jsonobj,
+                success: function (data) {
+                    alert('inserted');
+                }
+            })
+           
+        })
+
+
+
+        //Fetch Single record for edit model
+
+        $(document).on("click", ".edit-btn", function () {
+            $("#modal").show();
+            var emp_id = $(this).data("eide");
+            var obj = { eid: emp_id };
+            var myjson = JSON.stringify(obj);
+
+            console.log(myjson);
+
+            $.ajax({
+                url: "http://localhost/php_api/api_fetch_single.php",
+                type: "POST",
+                data: myjson,
+                success: function (data) {
+                    console.log(data);
+
+                    $("#edit_id").val(data[0].id);
+                    $("#edit_name").val(data[0].name);
+                    $("#edit_email").val(data[0].email);
+                    $("#edit_age").val(data[0].age);
+                    $("#edit_desig").val(data[0].designation);
+                },
+
+            });
+        });
+    });
+</script>
+
+</html>
